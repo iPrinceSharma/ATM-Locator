@@ -1,0 +1,219 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="container" style="margin-top:40px">
+    <h2> Filter your result </h2>
+    <div class="row">
+        <div class="col-md-2 btn-group special">
+            <div class="form-group">
+                <select class="form-control" id="countryName" onchange="displayStates(this.value)">
+                    <option value="">Select Country</option>
+                    @foreach (var item in ViewBag.Country)
+                    {
+                        <option value='@item'>@item</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 btn-group special" style="display:none" id="stateBlock">
+            <div class="form-group">
+                <select class="form-control" id="stateName" onchange="displayBank(this.value)">
+                    <option value="">Select State</option>
+                    @foreach (var item in ViewBag.states)
+                    {
+                        <option value='@item'>@item</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2" style="display:none" id="bankBlock">
+            <div class="form-group">
+                <select class="form-control" id="bankName">
+                    <option value="">Select Bank</option>
+                    @foreach (var item in ViewBag.Country)
+                    {
+                        <option value='@item' s>@item</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-success" type="button" onclick="FilterSearch()"> Search </button>
+
+        </div>
+    </div>
+</div>
+
+<div id="errorMessage" style="display:none">
+    <p style="text-align:center;color:red;font-size:25px">No ATM found for selected bank</p>
+</div>
+
+<div id="dvMap" style="width: 100%; height: 500px;display:none;margin:20px"></div>
+
+<script>
+
+    function FilterSearch() {
+        var x = document.getElementById("errorMessage");
+        x.style.display = "none";
+        var countryName = document.getElementById("countryName").value;
+        var stateName = document.getElementById("stateName").value;
+        var bankName = document.getElementById("bankName").value;
+        if (countryName != "" && stateName != "") {
+
+            var myRequest = "coordinates?stateName=" + stateName + "&bankName=" + bankName;
+
+            console.log("My Request : " + myRequest);
+
+            var data = JSON.stringify({
+                'stateName': stateName,
+                'bankName': bankName
+            });
+
+            // get list of ATM coordinats for that particular bank
+            $.ajax({
+                type: "GET",
+                url: myRequest,
+                contentType: "application/json; charset=utf-8"
+            }).done((data) => {
+                showLocationOnMap(data);
+            });
+        } else {
+            alert("Please select country name first");
+        }
+    }
+
+    function displayStates(period) {
+        var x = document.getElementById("stateBlock");
+        if (period == "") {
+            x.style.display = "none";
+            x.value = "";
+
+            var y = document.getElementById("bankName");
+            y.value = "";
+
+        } else {
+            // make the ajax request and fetch and state names
+            var countryName = document.getElementById("countryName").value;
+
+            if (countryName == "") {
+                alert("Please select Country");
+                return;
+            }
+
+            var getRequest = "states/" + countryName;
+            $.ajax({
+                type: "GET",
+                url: getRequest,
+                contentType: "application/json; charset=utf-8"
+            })
+                .done(function (data) {
+
+                var ddl = $('#stateName');
+                ddl.empty();
+
+                for (var item in data) {
+                   
+
+                    var newElement = $(document.createElement('option'));
+                    newElement.attr('value', data[item])
+                    newElement.text(data[item])
+                    newElement.appendTo(ddl);
+                }
+
+              
+                x.style.display = "block";
+            });
+        }
+    }
+
+    function displayBank(stateSelected) {
+        var x = document.getElementById("bankBlock");
+        if (stateSelected == "") {
+            x.style.display = "none";
+
+            var y = document.getElementById("bankName");
+            y.value = "";
+        } else {
+            // make the ajax request and fetch and state names
+            var countryName = document.getElementById("stateName").value;
+
+            if (countryName == "") {
+                alert("Please select State");
+                return;
+            }
+
+            var getRequest = "banks/" + countryName;
+            $.ajax({
+                type: "GET",
+                url: getRequest,
+                contentType: "application/json; charset=utf-8"
+            })
+                .done(function (data) {
+
+                    var ddl = $('#bankName');
+                    ddl.empty();
+
+                    for (var item in data) {
+                     
+
+                        var newElement = $(document.createElement('option'));
+                        newElement.attr('value', data[item])
+                        newElement.text(data[item])
+                        newElement.appendTo(ddl);
+                    }
+
+                   
+                    x.style.display = "block";
+                });
+        }
+    }
+
+    // Add location point marker on the gooogle map
+    function showLocationOnMap(markers) {
+        if (markers.length == 0) {
+            var x = document.getElementById("errorMessage");
+
+            x.style.display = "block";
+            return;
+        } else if (markers.length>0) {
+            var lat = markers[0].lat;
+            var long = markers[0].lng;
+            var mapOptions = {
+                center: new google.maps.LatLng(lat, long),
+                zoom: 14,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            var infoWindow = new google.maps.InfoWindow();
+            var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
+
+            for (i = 0; i < markers.length; i++) {
+                var data = markers[i]
+                var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+                var marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    title: data.title
+                });
+                (function (marker, data) {
+                    google.maps.event.addListener(marker, "click", function (e) {
+                        infoWindow.setContent(data.description);
+                        infoWindow.open(map, marker);
+                    });
+                })(marker, data);
+            }
+
+            // make the div visible
+            var x = document.getElementById("dvMap");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    }
+</script>
+

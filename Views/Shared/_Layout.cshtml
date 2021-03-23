@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - ATM Finder</title>
+    
+@*    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">*@
+
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color:#000">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <label class="navbar-title" style="margin-top:10px">@Html.ActionLink("ATM Finder", "Index", "Home",null, new { @style = "font-size:25px" })</label>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav" style="color:black">
+                            <li class="navbar-title">@Html.ActionLink("Use Current Location", "Index", "CurrentLocation")</li>
+                            <li class="navbar-title">@Html.ActionLink("Use Manual location", "Index", "ManualLocation")</li>
+                            <li class="navbar-title">@Html.ActionLink("Use Bank Name", "Index", "Bank")</li>
+                            ]
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p style="text-align:center">Made by @@Akshay Hande &copy; @DateTime.Now.Year </p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFvYIe4ii7ArLqcw3Z3RW-QGmsSgzVdnU"></script>
+</body>
+</html>

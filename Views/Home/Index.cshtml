@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container">
+    <h3 style="margin-left: 120px;margin-bottom: 30px;">
+        Choose the option to locate ATM
+    </h3>
+    <div class="row">
+        <div class="col-md-4 col-sm-6">
+            <div class="product-grid">
+                <div class="product-image">
+                    <a href="#">
+                        <img src="~/Content/Images/currentLocation.jpg">
+                    </a>
+                </div>
+
+                <div class="product-content">
+                    <h2 class="title"> @Html.ActionLink("Use current location", "Index", "CurrentLocation", null, new { @style = "" })</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="product-grid">
+                <div class="product-image">
+                    <a href="#">
+                        <img src="~/Content/Images/manualLocation.jpg">
+                    </a>
+                </div>
+
+                <div class="product-content">
+                    <h2 class="title"> @Html.ActionLink("Use Manual Location", "Index", "ManualLocation", null, new { @style = "" })</h2>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="product-grid">
+                <div class="product-image">
+                    <a href="#">
+                        <img src="~/Content/Images/bankName.jpg">
+                    </a>
+                </div>
+
+                <div class="product-content">
+                    <h2 class="title"> @Html.ActionLink("Use Bank Name", "Index", "Bank", null, new { @style = "" })</h2>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
